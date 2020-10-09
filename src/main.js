@@ -2,6 +2,10 @@ import Vue from 'vue';
 import App from './App.vue';
 import Nui from './utils/Nui';
 
+import VueDraggable from "vue-draggable";
+
+Vue.use(VueDraggable);
+
 Vue.config.productionTip = false;
 
 new Vue({

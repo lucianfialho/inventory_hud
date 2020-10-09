@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <hello-world name="2277" />
+    <VueDraggable />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
 import Nui from './utils/Nui';
+import VueDraggable from "./components/VueDraggable";
 
 export default {
   name: 'app',
   components: {
-    HelloWorld,
+    VueDraggable,
   },
   data() {
     return {};
