@@ -3,7 +3,7 @@
     <draggable class="list-group" :list="inventory" group="people" dragoverBubble="true" forceFallback="false" @start="log" @change="log">
         <div
           class="list-group-item"
-          v-for="(element, index) in list1"
+          v-for="(element, index) in inventory"
           :key="element.name"
         >
           {{ element.name }} {{ index }}
@@ -13,7 +13,7 @@
     <draggable class="list-group" :list="floor" group="people" dragoverBubble="true" forceFallback="false" @start="log"  @change="log">
       <div
         class="list-group-item"
-        v-for="(element, index) in list2"
+        v-for="(element, index) in floor"
         :key="element.name"
       >
         {{ element.name }} {{ index }}
@@ -46,11 +46,10 @@ export default {
       'message',
       event => {
         const item = event.data;
-
         if(item.showInventoryHud === true) this.showInventoryHud = item.showInventoryHud
         if(item.showInventoryHud === false) this.showInventoryHud = item.showInventoryHud
-
-        if(item.showInventoryHud && item.items) this.inventory.items = item.items 
+        console.log(item.items)
+        if(item.items) this.inventory = item.items 
       },
       false,
     );
