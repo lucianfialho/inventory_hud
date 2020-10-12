@@ -1,49 +1,46 @@
 <template>
   <div id="app" v-if="showInventoryHud">
-    <draggable class="list-group" :list="inventory" group="people" dragoverBubble="true" forceFallback="false" @start="log" @change="log">
+    <draggable class="list-group" :list="inventory" group="people" handle=".info" dragoverBubble="true" forceFallback="false">
         <template v-for="element in inventory">
           <div
             class="list-group-item"
             v-bind:class="{ active: element.context }"
             v-if="element.count"
             :key="element.name"
-            @contextmenu.prevent="rightClick(element); element.context = !element.context"
+            @contextmenu.prevent="element.context = !element.context"
           >
-            <div class="bar">
-              <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
-              <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
+            <div class="info">
+              <div class="bar">
+                <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
+                <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
+              </div>
+
+              <b-icon
+                pack="fas"
+                :icon="element.icon ? element.icon : 'question'"
+                size="is-medium">
+              </b-icon>
+              <span> {{element.label}} </span>
             </div>
-              
-            <b-icon
-              pack="fas"
-              :icon="element.icon ? element.icon : 'question'"
-              size="is-medium">
-            </b-icon>
-            <span> {{element.label}} </span>
 
             <div v-if="element.context" class="menu-context">
-              <b-field>
-                <b-input placeholder="Use"
-                    size="is-small"
-                    :value="element"
-                    min="1"
-                    :max="element.count"
-                    type="number"
-                    icon-right="user-check"
-                    icon-right-clickable
-                    @icon-right-click="clearIconClick">
-                </b-input>
-              </b-field>
+              <b-button size="is-small"
+                icon-left="user-check"
+                @click.prevent="useItem(element)"
+                >
+                Use
+              </b-button>
               <b-field>
                 <b-input placeholder="Throw"
+                    v-if="element.canRemove"
                     size="is-small"
-                    :value="element"
+                    v-model="element.dropQuantity"
                     min="1"
                     :max="element.count"
                     type="number"
                     icon-right="trash"
                     icon-right-clickable
-                    @icon-right-click="clearIconClick">
+                    @icon-right-click="dropItem(element)">
                 </b-input>
               </b-field>
             </div>
@@ -51,7 +48,7 @@
         </template>
     </draggable>
 
-    <draggable class="list-group" v-if="floor" :list="floor" group="people" dragoverBubble="true" forceFallback="false" @start="log"  @change="log">
+    <draggable class="list-group drop-zone" :list="floor" group="people" dragoverBubble="true" forceFallback="false" @change="dropItem">
       <div
         class="list-group-item"
         v-for="element in floor"
@@ -65,7 +62,7 @@
 
 <script>
 import draggable from 'vuedraggable'
-
+import axios from 'axios'
 export default {
   name: 'app',
   components: {
@@ -76,14 +73,14 @@ export default {
     return {
       showInventoryHud: false,
       inventory: [
-        {"name": "bandage", "label": "Bandage", "weight": 2, "rare": 0, "can_remove": 1, "icon": "band-aid", "count": 4, "context": false},
-        {"name": "medikit", "label": "Medikit", "weight": 2, "rare": 0, "can_remove": 1, "icon": "medkit", "count": 4, "context": false},
-        {"name": "asd", "label": "asd", "weight": 2, "rare": 0, "can_remove": 1, "icon": null, "count": 1, "context": false},
-        {"name": "weed", "label": "Weed", "weight": 2, "rare": 0, "can_remove": 1, "icon": "cannabis", "count": 1, "context": false},
-        {"name": "blublerrykush", "label": "Blublerry Kush", "weight": 2, "rare": 0, "can_remove": 1, "icon": "cannabis", "count": 1, "context": false},
-        {"name": "ak-47", "label": "Ak-47", "weight": 10, "rare": 0, "can_remove": 1, "icon": "cannabis", "count": 1, "context": false}
+        {"name": "bandage", "label": "Bandage", "weight": 2, "rare": 0, "canRemove": 1, "icon": "band-aid", "count": 4, "context": false, dropQuantity: 0},
+        {"name": "medikit", "label": "Medikit", "weight": 2, "rare": 0, "canRemove": 1, "icon": "medkit", "count": 4, "context": false, dropQuantity: 0},
+        {"name": "asd", "label": "asd", "weight": 2, "rare": 0, "canRemove": 1, "icon": null, "count": 1, "context": false, dropQuantity: 0},
+        {"name": "weed", "label": "Weed", "weight": 2, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0},
+        {"name": "blublerrykush", "label": "Blublerry Kush", "weight": 2, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0},
+        {"name": "ak-47", "label": "Ak-47", "weight": 10, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0}
       ],
-      floor: false
+      floor: []
     };
   },
   destroyed() {
@@ -98,31 +95,25 @@ export default {
         if(item.showInventoryHud === true) this.showInventoryHud = item.showInventoryHud
         if(item.showInventoryHud === false) this.showInventoryHud = item.showInventoryHud
 
-        if(item.items)
-          this.inventory = item.items.map(item => ( {...item, context: false}))
-
+        if(item.items) this.inventory = item.items
       },
       false,
     );
   },
   methods: {
-    add: function() {
-      this.list.push({ name: "Juan" });
+    sendData (name, data) {
+      return axios.post(`http://esx_inventory_hud/${name}`, { data: data })
     },
-    replace: function() {
-      this.list = [{ name: "Edgard" }];
+    useItem (item) {
+      this.sendData('esx_inventory_hud:UseItem', item.value)
     },
-    clone: function(el) {
-      return {
-        name: el.name + " cloned"
-      };
+    dropItem (element) {
+      const item = (element.hasOwnProperty('added')) ? element.added.element : element
+      const hasDropped = this.sendData('esx_inventory_hud:DropItem', item)
+            hasDropped.then(response => {
+              if (response.data) this.floor.splice(0, 1) 
+            })
     },
-    log: function(evt) {
-      window.console.log(evt);
-    },
-    rightClick (element) {
-      window.console.log(element)
-    }
   },
 };
 </script>
@@ -137,7 +128,7 @@ html {
 }
 #app {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background: rgba(0,0,0,.125);
   height: 100%;
   position: absolute;
@@ -153,7 +144,8 @@ html {
 .list-group {
     width: 35%;
     margin: 2%;
-    
+    min-height: 200px;
+
     padding-left: 0;
     margin-bottom: 0;
     border-radius: .25rem;
@@ -164,9 +156,22 @@ html {
     flex-direction: row;
     place-content: flex-start;
 }
+
 .list-group-item+.list-group-item {
     border-top-width: 0;
 }
+
+.list-group.drop-zone {
+  border: 5px dotted red;
+}
+
+.list-group.drop-zone::after{
+  content: "DROP ZONE";
+  color: WHITE;
+  line-height: 200px;
+  margin: 0 auto;
+}
+
 .list-group-item {
   position: relative;
   display: flex;
@@ -176,10 +181,14 @@ html {
   border: 1px solid rgba(0,0,0,.125);
   max-height: 100px;
   flex-flow: column;
-  align-items: center;
+  
   margin: .75rem;
 }
-
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .list-group-item.active {
   min-height: 220px;
   max-height: 100px;
