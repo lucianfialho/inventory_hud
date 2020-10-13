@@ -33,6 +33,7 @@
             >
               <div class="info">
                 <div class="bar">
+                  <!-- TODO: Tratar esse component para verificar se o item em questão tem o peso  -->
                   <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
                   <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
                 </div>
@@ -89,19 +90,12 @@ export default {
   data() {
     return {
       user: {
-        firstName: 'Maria',
-        lastName: 'Joana',
-        dateOfBirth: '16/08/1989'
+        firstName: null,
+        lastName: null,
+        dateOfBirth: null
       },
       showInventoryHud: false,
-      inventory: [
-        {"name": "bandage", "label": "Bandage", "weight": 2, "rare": 0, "canRemove": 1, "icon": "band-aid", "count": 4, "context": false, dropQuantity: 0},
-        {"name": "medikit", "label": "Medikit", "weight": 2, "rare": 0, "canRemove": 1, "icon": "medkit", "count": 4, "context": false, dropQuantity: 0},
-        {"name": "asd", "label": "asd", "weight": 2, "rare": 0, "canRemove": 1, "icon": null, "count": 1, "context": false, dropQuantity: 0},
-        {"name": "weed", "label": "Weed", "weight": 2, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0},
-        {"name": "blublerrykush", "label": "Blublerry Kush", "weight": 2, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0},
-        {"name": "ak-47", "label": "Ak-47", "weight": 10, "rare": 0, "canRemove": 1, "icon": "cannabis", "count": 1, "context": false, dropQuantity: 0}
-      ],
+      inventory: [],
       floor: []
     };
   },
@@ -184,6 +178,7 @@ html {
 .inventory {
   display: flex;
   flex-direction: column;
+  width: 50%;
 }
 .buttons {
   margin-top: 35px;
