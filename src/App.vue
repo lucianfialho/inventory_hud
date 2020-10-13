@@ -4,23 +4,43 @@
       <div class="card-content">
         <div class="media">
           <div class="media-left">
-            <figure class="image is-48x48">
-              <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+            <figure class="image is-128x128">
+              <img src="https://media.discordapp.net/attachments/752611239988822027/765551405133987850/Sem_Titulo-1.jpg" alt="Placeholder image">
             </figure>
           </div>
           <div class="media-content">
             <p class="title is-4">{{user.firstName}} {{user.lastName}}</p>
-            <p class="subtitle is-6">045-933</p>
+            <p class="subtitle is-6">
+              <b-icon
+                icon="briefcase"
+                size="is-small">
+              </b-icon>
+              <span> {{user.job.label}} - <small>{{user.job.grade_label}}</small></span>
+            </p>
+            <p class="bank-info">
+              <b-icon
+                icon="piggy-bank"
+                size="is-small">
+              </b-icon>
+              <span> {{user.bank}}</span>
+            </p>
           </div>
-        </div>
-
-        <div class="content">
-          <time :datetime="user.dateOfBirth">{{user.dateOfBirth}}</time>
         </div>
       </div>
     </div>
-    <div class="inventory is-two-third">
-      <draggable class="list-group" :list="inventory" group="people" handle=".info" dragoverBubble="true" forceFallback="false">
+    <div class="inventory" 
+        @mouseleave="isDrop = true"
+        @mouseenter="isDrop = false"
+      >
+      <h1> Inventory</h1>
+      <draggable class="list-group" 
+        :list="inventory"
+        group="people"
+        handle=".info" 
+        dragoverBubble="false"
+        forceFallback="true"
+        @end="dropItem"
+        >
           <template v-for="(element, index) in inventory">
             <div
               class="list-group-item"
@@ -28,7 +48,6 @@
               v-if="element.count"
               :key="index"
               @contextmenu.prevent="useItem(element)"
-              @click.middle.exact="element.context = !element.context"
               @click.middle.ctrl.exact="splitItem(element)"
             >
               <div class="info">
@@ -45,36 +64,13 @@
                 </b-icon>
                 <span> {{element.label}} </span>
               </div>
-
-              <div v-if="element.context" class="menu-context">
-                <b-field>
-                  <b-input placeholder="Throw"
-                      v-if="element.canRemove"
-                      size="is-small"
-                      v-model="element.dropQuantity"
-                      min="1"
-                      :max="element.count"
-                      type="number"
-                      icon-right="trash"
-                      icon-right-clickable
-                      @icon-right-click="dropItem(element)">
-                  </b-input>
-                </b-field>
-              </div>
             </div>
           </template>
       </draggable>
-
-      <draggable class="list-group drop-zone" :list="floor" group="people" dragoverBubble="true" forceFallback="false" @change="dropItem">
-        <div
-          class="list-group-item"
-          v-for="element in floor"
-          :key="element.name"
-        >
-          {{ element.label }}
-        </div>
-      </draggable>
     </div>
+    <div class="loadout">
+      <h2> Loadout </h2>
+    </div> 
   </div>
 </template>
 
@@ -90,13 +86,20 @@ export default {
   data() {
     return {
       user: {
-        firstName: null,
-        lastName: null,
-        dateOfBirth: null
+        firstName: 'Lucian',
+        lastName: 'Fialho',
+        dateOfBirth: '16/08/1989',
+        bank: 0,
+        job: {
+          label: 'LSPD',
+          grade_label: 'Commandant'
+        }
       },
       showInventoryHud: false,
-      inventory: [],
-      floor: []
+      inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
+                  {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, "label": "Seu cu", "canRemove": true, "usable": true}],
+      floor: [],
+      isDrop: false,
     };
   },
   destroyed() {
@@ -113,7 +116,9 @@ export default {
 
         if(item.items) this.inventory = item.items
 
-        if(item.user) this.user = item.user
+        if(item.user) {
+          this.user = item.user
+        }
       },
       false,
     );
@@ -122,16 +127,27 @@ export default {
     sendData (name, data) {
       return axios.post(`http://esx_inventory_hud/${name}`, { data: data })
     },
+
     useItem (item) {
       this.sendData('esx_inventory_hud:UseItem', item.value)
     },
-    dropItem (element) {
-      const item = (element.hasOwnProperty('added')) ? element.added.element : element
-      const hasDropped = this.sendData('esx_inventory_hud:DropItem', parseInt(item))
+
+    dropItem (event) {
+      let isDrop = this.checkIfDrop()
+      
+      if(isDrop === false) return
+      
+      const item = this.inventory[event.oldIndex]
+            item.dropQuantity = event.originalEvent.ctrlKey ? 1 : item.dropQuantity
+
+      const hasDropped = this.sendData('esx_inventory_hud:DropItem', item)
+
             hasDropped.then(response => {
-              if (response.data) this.floor.splice(0, 1) 
+              if (response.data)
+                this.inventory.splice(event.oldIndex, 1)
             })
     },
+
     splitItem (element) {
 
       if (element.count < 2) return
@@ -145,10 +161,15 @@ export default {
       this.insertInInventory([obj1, obj2])
       
     },
+
     insertInInventory (arrayOfItems) {
-      let newinventory = this.inventory.filter(el => (el.name !== arrayOfItems[0].name))
+      let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
+      
       this.inventory = [...newinventory, ...arrayOfItems]
-    } 
+    },
+    checkIfDrop () {
+      return this.isDrop
+    }
   },
 };
 </script>
@@ -172,13 +193,16 @@ html {
 .card {
   min-width: 25% !important;
   max-width: 30% !important;
-  max-height: 20%;
+  max-height: 17%;
   margin: 2%;
+  z-index: 2;
+  min-height: 17%;
 }
 .inventory {
   display: flex;
   flex-direction: column;
   width: 50%;
+  margin: 2%;
 }
 .buttons {
   margin-top: 35px;
@@ -189,7 +213,6 @@ html {
 }
 .list-group {
     width: 100%;
-    margin: 2%;
     min-height: 200px;
 
     padding-left: 0;
@@ -201,22 +224,13 @@ html {
     flex-wrap: wrap;
     flex-direction: row;
     place-content: flex-start;
+    z-index: 2;
 }
 
 .list-group-item+.list-group-item {
     border-top-width: 0;
 }
 
-.list-group.drop-zone {
-  border: 5px dotted red;
-}
-
-.list-group.drop-zone::after{
-  content: "DROP ZONE";
-  color: WHITE;
-  line-height: 200px;
-  margin: 0 auto;
-}
 
 .list-group-item {
   position: relative;
