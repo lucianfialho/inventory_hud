@@ -70,6 +70,30 @@
     </div>
     <div class="loadout">
       <h2> Loadout </h2>
+      <template v-for="(weapon, index) in loadout">
+        <div
+          class="list-group-item"
+          v-bind:class="{ active: weapon.selected }"
+          :key="index"
+          @click.prevent="weapon.selected = !weapon.selected"
+          >
+          <div class="info">
+            <div class="bar">
+              <span class="quantity"><b-tag rounded> {{weapon.ammo}}qtd</b-tag></span>
+            </div>
+            <b-icon
+              pack="fas"
+              :icon="weapon.icon ? weapon.icon : 'question'"
+              size="is-medium">
+            </b-icon>
+            <span> {{weapon.label}} </span>
+          </div>
+        </div>
+      </template>
+      <!-- TODO: Iniciar Weapon info das armas, lembrar que esse cara pode receber um array para o cara na hora que selecionar ele poder comparar as 2 armas que ele tem lembrar de limitar -->
+      <div class="weapon-info">
+        
+      </div>
     </div> 
   </div>
 </template>
@@ -95,6 +119,7 @@ export default {
           grade_label: 'Commandant'
         }
       },
+      loadout: [],
       showInventoryHud: false,
       inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
                   {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, "label": "Seu cu", "canRemove": true, "usable": true}],
@@ -118,6 +143,7 @@ export default {
 
         if(item.user) {
           this.user = item.user
+          this.loadout = item.loadout
         }
       },
       false,
@@ -189,8 +215,9 @@ html {
   height: 100%;
   position: absolute;
   width: 100%;
+  flex-wrap: wrap;
 }
-.card {
+.card, .loadout {
   min-width: 25% !important;
   max-width: 30% !important;
   max-height: 17%;
@@ -198,6 +225,7 @@ html {
   z-index: 2;
   min-height: 17%;
 }
+
 .inventory {
   display: flex;
   flex-direction: column;
