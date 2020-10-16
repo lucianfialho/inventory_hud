@@ -1,110 +1,74 @@
 <template>
   <div id="app" v-if="showInventoryHud">
-    <div class="card">
-      <div class="card-content">
-        <div class="media">
-          <div class="media-left">
-            <figure class="image is-128x128">
-              <img src="https://media.discordapp.net/attachments/752611239988822027/765551405133987850/Sem_Titulo-1.jpg" alt="Placeholder image">
-            </figure>
-          </div>
-          <div class="media-content">
-            <p class="title is-4">{{user.firstName}} {{user.lastName}}</p>
-            <p class="subtitle is-6">
-              <b-icon
-                icon="briefcase"
-                size="is-small">
-              </b-icon>
-              <span> {{user.job.label}} - <small>{{user.job.grade_label}}</small></span>
-            </p>
-            <p class="bank-info">
-              <b-icon
-                icon="piggy-bank"
-                size="is-small">
-              </b-icon>
-              <span> {{user.bank}}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="inventory" 
         @mouseleave="isDrop = true"
         @mouseenter="isDrop = false"
       >
-      <h1> Inventory</h1>
-      <draggable class="list-group" 
-        :list="inventory"
-        group="people"
-        handle=".info" 
-        dragoverBubble="false"
-        forceFallback="true"
-        @end="dropItem"
-        >
-          <template v-for="(element, index) in inventory">
-            <div
-              class="list-group-item"
-              v-bind:class="{ active: element.context }"
-              v-if="element.count"
-              :key="index"
-              @contextmenu.prevent="useItem(element)"
-              @click.middle.ctrl.exact="splitItem(element)"
-            >
-              <div class="info">
-                <div class="bar">
-                  <!-- TODO: Tratar esse component para verificar se o item em questão tem o peso  -->
-                  <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
-                  <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
-                </div>
-
-                <b-icon
-                  pack="fas"
-                  :icon="element.icon ? element.icon : 'question'"
-                  size="is-medium">
-                </b-icon>
-                <span> {{element.label}} </span>
-              </div>
-            </div>
-          </template>
-      </draggable>
-    </div>
-    <div class="loadout">
-      <h2> Loadout </h2>
-      <template v-for="(weapon, index) in loadout">
-        <div
-          class="list-group-item"
-          v-bind:class="{ active: weapon.selected }"
-          :key="index"
-          @click.prevent="weapon.selected = !weapon.selected"
-          >
-          <div class="info">
-            <div class="bar">
-              <span class="quantity"><b-tag rounded> {{weapon.ammo}}qtd</b-tag></span>
-            </div>
-            <b-icon
-              pack="fas"
-              :icon="weapon.icon ? weapon.icon : 'question'"
-              size="is-medium">
-            </b-icon>
-            <span> {{weapon.label}} </span>
-          </div>
-        </div>
-      </template>
-      <!-- TODO: Iniciar Weapon info das armas, lembrar que esse cara pode receber um array para o cara na hora que selecionar ele poder comparar as 2 armas que ele tem lembrar de limitar -->
-      <div class="weapon-info">
+      <div class="personalInfo">
+        <personalInfo :user="user"> </personalInfo>
         
+        <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
-    </div> 
+      <div class="personalItems">
+        <h2> Loadout </h2>
+        <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
+
+        <h2> Items</h2>
+        <draggable class="list-group" 
+          :list="inventory"
+          group="people"
+          handle=".info" 
+          dragoverBubble="false"
+          forceFallback="true"
+          @end="dropItem"
+          >
+            <template v-for="(element, index) in inventory">
+              <div
+                class="list-group-item"
+                v-bind:class="{ active: element.context }"
+                v-if="element.count"
+                :key="index"
+                @contextmenu.prevent="useItem(element)"
+                @click.middle.ctrl.exact="splitItem(element)"
+              >
+                <div class="info">
+                  <div class="bar">
+                    <!-- TODO: Tratar esse component para verificar se o item em questão tem o peso  -->
+                    <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
+                    <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
+                  </div>
+
+                  <b-icon
+                    pack="fas"
+                    :icon="element.icon ? element.icon : 'question'"
+                    size="is-medium">
+                  </b-icon>
+                  <span> {{element.label}} </span>
+                </div>
+              </div>
+            </template>
+        </draggable>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+
 import draggable from 'vuedraggable'
+import personalInfo from './components/PersonalInfo'
+import loadout from './components/Loadout'
+import weaponInfo from './components/WeaponInfo'
+
 import axios from 'axios'
+
 export default {
   name: 'app',
   components: {
       draggable,
+      personalInfo,
+      loadout,
+      weaponInfo
   },
 
   data() {
@@ -119,8 +83,28 @@ export default {
           grade_label: 'Commandant'
         }
       },
-      loadout: [],
+      loadout: [{
+          label: "WEAPON_SPECIALCARBINE",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_SPECIALCARBINE",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      }],
       showInventoryHud: false,
+      showWeaponInfo: false,
+      weaponInfo: {},
       inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
                   {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, "label": "Seu cu", "canRemove": true, "usable": true}],
       floor: [],
@@ -195,6 +179,12 @@ export default {
     },
     checkIfDrop () {
       return this.isDrop
+    },
+
+    showWeaponBoxInfo (weapon) {
+      this.showWeaponInfo = weapon.selected
+      if(this.showWeaponInfo) this.weaponInfo = weapon
+      
     }
   },
 };
@@ -211,27 +201,36 @@ html {
 #app {
   display: flex;
   flex-direction: row;
-  background: rgba(0,0,0,.125);
+  background: url(https://media.discordapp.net/attachments/752611239988822027/766419973450891314/unknown.png);
   height: 100%;
   position: absolute;
   width: 100%;
   flex-wrap: wrap;
-}
-.card, .loadout {
-  min-width: 25% !important;
-  max-width: 30% !important;
-  max-height: 17%;
-  margin: 2%;
-  z-index: 2;
-  min-height: 17%;
+  justify-content: flex-end;
 }
 
 .inventory {
   display: flex;
-  flex-direction: column;
-  width: 50%;
+  flex-direction: row;
+  width: 70%;
+  max-height: 80%;
   margin: 2%;
+  transform: perspective(1000px) rotateY(-5deg);
+  box-sizing: border-box;
+
+  // background: rgba(0,0,0,0.3);
+  // box-shadow: 0 0 20px 0px rgba(0,0,0,.4);
+
+  .personalInfo {
+    display: flex;
+    width: 20%;
+    backdrop-filter: 5px;
+  }
+  .personalItems{
+    width: 80%;
+  }
 }
+
 .buttons {
   margin-top: 35px;
 }
@@ -240,43 +239,42 @@ html {
   background: #c8ebfb;
 }
 .list-group {
-    width: 100%;
-    min-height: 200px;
-
-    padding-left: 0;
-    margin-bottom: 0;
-    border-radius: .25rem;
-    background: rgba(0,0,0,.425);
-    
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    place-content: flex-start;
-    z-index: 2;
+  width: 100%;
+  min-height: 200px;
+  
+  padding-left: 0;
+  margin-bottom: 0;
+  
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  place-content: flex-start;
+  
+  z-index: 2;
+  
 }
 
 .list-group-item+.list-group-item {
     border-top-width: 0;
 }
 
-
 .list-group-item {
   position: relative;
   display: flex;
   flex-grow: 1;
   padding: .75rem 1.25rem;
-  background-color: #fff;
-  border: 1px solid rgba(0,0,0,.125);
   max-height: 100px;
   flex-flow: column;
-  
+  background: #fff;
   margin: .75rem;
 }
+
 .info {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .list-group-item.active {
   min-height: 220px;
   max-height: 100px;
