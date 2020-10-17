@@ -6,7 +6,6 @@
       >
       <div class="personalInfo">
         <personalInfo :user="user"> </personalInfo>
-        
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
@@ -223,8 +222,10 @@ html {
 
   .personalInfo {
     display: flex;
-    width: 20%;
+    flex-direction: column;
     backdrop-filter: 5px;
+    width: 18%;
+    margin-right: 2%;
   }
   .personalItems{
     width: 80%;

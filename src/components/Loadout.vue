@@ -20,10 +20,6 @@
                 </div>
             </div>
         </template>
-        <!-- TODO: Iniciar Weapon info das armas, lembrar que esse cara pode receber um array para o cara na hora que selecionar ele poder comparar as 2 armas que ele tem lembrar de limitar -->
-        <div class="weapon-info">
-
-        </div>
     </div>
 </template>
 
