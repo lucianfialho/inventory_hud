@@ -9,44 +9,11 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <h2> {{ $t('loadout') }} </h2>
+        
         <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
 
-        <h2> {{ $t('items') }}</h2>
-        <draggable class="list-group" 
-          :list="inventory"
-          group="people"
-          handle=".info" 
-          dragoverBubble="false"
-          forceFallback="true"
-          @end="dropItem"
-          >
-            <template v-for="(element, index) in inventory">
-              <div
-                class="list-group-item"
-                v-bind:class="{ active: element.context }"
-                v-if="element.count"
-                :key="index"
-                @contextmenu.prevent="useItem(element)"
-                @click.middle.ctrl.exact="splitItem(element)"
-              >
-                <div class="info">
-                  <div class="bar">
-                    <!-- TODO: Tratar esse component para verificar se o item em questão tem o peso  -->
-                    <span class="weight"><b-tag rounded> {{element.weight}}kg</b-tag></span>
-                    <span class="quantity"><b-tag rounded> {{element.count}}</b-tag></span>
-                  </div>
-
-                  <b-icon
-                    pack="fas"
-                    :icon="element.icon ? element.icon : 'question'"
-                    size="is-medium">
-                  </b-icon>
-                  <span> {{element.label}} </span>
-                </div>
-              </div>
-            </template>
-        </draggable>
+        <draggable :inventory="inventory" />
+        
       </div>
     </div>
   </div>
@@ -54,7 +21,7 @@
 
 <script>
 
-import draggable from 'vuedraggable'
+import draggable from './components/Draggable'
 import personalInfo from './components/PersonalInfo'
 import loadout from './components/Loadout'
 import weaponInfo from './components/WeaponInfo'
@@ -212,13 +179,70 @@ html {
   display: flex;
   flex-direction: row;
   width: 70%;
-  max-height: 80%;
   margin: 2%;
   transform: perspective(1000px) rotateY(-5deg);
   box-sizing: border-box;
 
-  // background: rgba(0,0,0,0.3);
-  // box-shadow: 0 0 20px 0px rgba(0,0,0,.4);
+  .panel {
+    color: white;
+      
+      .header {
+        background: rgba($color: #000000, $alpha: 0.4);
+        padding: 1rem;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+
+      .main {
+        background: rgba($color: #000000, $alpha: 0.3);
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        min-height: 130px;
+        
+        .info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .bar {
+          position: inherit;
+          
+
+          .quantity {
+              position: absolute;
+              top: 0;
+              right: 4px;
+          }
+        }
+        
+        .list-group-item {
+          position: relative;
+          
+          display: flex;
+          flex-flow: column;
+
+          padding: .75rem 1.25rem;
+          max-height: 120px;
+          
+          max-width: 220px;
+          background: rgba($color: #000000, $alpha: 0.3);
+          margin: .75rem;
+          border-radius: 1rem;
+
+          .c-icon {
+              width: 3rem;
+              height: 3rem;
+              background: rgba($color: #000000, $alpha: 0.3);
+              border-radius: 3rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+        }
+      }
+  }
+
 
   .personalInfo {
     display: flex;
@@ -255,43 +279,10 @@ html {
   
 }
 
-.list-group-item+.list-group-item {
-    border-top-width: 0;
-}
-
-.list-group-item {
-  position: relative;
-  display: flex;
-  flex-grow: 1;
-  padding: .75rem 1.25rem;
-  max-height: 100px;
-  flex-flow: column;
-  background: #fff;
-  margin: .75rem;
-}
-
-.info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.list-group-item.active {
-  min-height: 220px;
-  max-height: 100px;
-  flex-grow: 2;
-}
-
 .list-group-item.active .menu-context{
   margin-top: 0.65rem;
   display: flex;
   flex-direction: column;
-}
-
-.list-group-item .bar .weight,
-.list-group-item .bar .quantity{
-  position: relative;
-  top: -0.45rem;
 }
 
 .list-group-item .bar .weight {

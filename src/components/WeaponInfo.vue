@@ -37,17 +37,16 @@ export default {
     min-height: 240px;
     max-height: 240px;
   
-  display: flex;
-  flex-grow: 1;
-  flex-flow: wrap;
-  align-items: center;
-  align-content: baseline;
+    display: flex;
+    flex-flow: wrap;
+    align-items: center;
+    align-content: baseline;
+    
+    background: rgba($color: #000000, $alpha: 0.1); 
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid white ;
+    padding: 1rem;
 
-  padding: .75rem 1.25rem;
-  
-  background: #fff;
-  margin: .75rem;
-  
   .progress {
       width: 20vh;
   }
