@@ -9,10 +9,10 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <h2> Loadout </h2>
+        <h2> {{ $t('loadout') }} </h2>
         <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
 
-        <h2> Items</h2>
+        <h2> {{ $t('items') }}</h2>
         <draggable class="list-group" 
           :list="inventory"
           group="people"
