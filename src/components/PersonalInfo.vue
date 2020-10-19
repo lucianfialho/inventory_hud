@@ -56,15 +56,19 @@ export default {
         width: 100%;
         z-index: 2;
         
-        background: rgba($color: #000000, $alpha: 0.1);
+        background: rgba($color: #000000, $alpha: 0.5);
         display: flex;
         flex-direction: column;
 
         align-content: center;
         padding: 1rem;
         
-        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.5);
         border-bottom: 1px solid white ;
         border-top: 1px solid white ;
+
+        .title, .subtitle {
+            color: white !important;
+        }
     }
 </style>

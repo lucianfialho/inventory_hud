@@ -202,14 +202,14 @@ html {
     color: white;
       
       .header {
-        background: rgba($color: #000000, $alpha: 0.4);
+        background: rgba($color: #000000, $alpha: 0.5);
         padding: 1rem;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
       }
 
       .main {
-        background: rgba($color: #000000, $alpha: 0.3);
+        background: rgba($color: #000000, $alpha: 0.5);
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
         min-height: 130px;
@@ -265,9 +265,11 @@ html {
     backdrop-filter: 5px;
     width: 18%;
     margin-right: 2%;
+    color: white;
   }
   .personalItems{
     width: 80%;
+    color: white;
   }
 }
 
