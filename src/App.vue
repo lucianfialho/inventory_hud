@@ -67,6 +67,24 @@ export default {
               accuracy: 75,
               range: 96
           }
+      },{
+          label: "WEAPON_AK",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_AK",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
       }],
       showInventoryHud: false,
       showWeaponInfo: false,
@@ -213,7 +231,9 @@ html {
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
         min-height: 130px;
-        
+        display: flex;
+        flex-direction: row;
+
         .info {
           display: flex;
           flex-direction: column;

@@ -10,6 +10,7 @@
                     v-bind:class="{ active: weapon.selected }"
                     :key="index"
                     @click.prevent="showWeaponInfoBox(weapon)"
+                    @v-on:keyup.ctrl="teste(weapon)"
                     >
                     <div class="info">
                         <div class="bar">
@@ -41,8 +42,21 @@ export default {
   },
   methods:{
     showWeaponInfoBox (weapon) {
+        if(this.checkWeaponSelected()) {
+            
+            this.$buefy.snackbar.open({
+                message: this.$i18n.t('notifications.moreThanOneWeaponSelect'),
+                type: 'is-warning',
+                position: 'is-top',
+                indefinite: true,
+            })
+            return 
+        }
         weapon.selected = !weapon.selected
         this.$emit('weaponAsSelected', weapon)
+    },
+    checkWeaponSelected () {
+        return this.loadout.filter((weapon) => (weapon.selected)).length > 0
     }
   }
 };

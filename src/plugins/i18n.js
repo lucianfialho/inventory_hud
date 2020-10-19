@@ -5,11 +5,17 @@ Vue.use(VueI18n);
 const messages = {
     'en': {
         loadout: 'Loadout',
-        items: 'Items'
+        items: 'Items',
+        notifications:{
+            moreThanOneWeaponSelect: 'You can select only 1 weapon!'
+        }
     },
     'pt-br': {
         loadout: 'Armamentos',
-        items: 'Equipamentos'
+        items: 'Equipamentos',
+        notifications:{
+            moreThanOneWeaponSelect: 'Você só pode selecionar uma arma!'
+        }
     }
 };
 
