@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-if="showInventoryHud">
+  <div id="app" v-if="showInventoryHud" @keyup.esc="closeInventory" ref="inventoryHud" autofocus="true" tabindex="0">
     <div class="inventory" 
         @mouseleave="isDrop = true"
         @mouseenter="isDrop = false"
@@ -81,12 +81,20 @@ export default {
     window.removeEventListener('message', this.listener);
   },
   mounted() {
+
     this.listener = window.addEventListener(
       'message',
       event => {
+
         const item = event.data;
 
-        if(item.showInventoryHud === true) this.showInventoryHud = item.showInventoryHud
+        if(item.showInventoryHud === true) {
+          this.showInventoryHud = item.showInventoryHud
+          setTimeout(() => {
+            this.$refs.inventoryHud.focus()
+          }, 1000);
+        }
+
         if(item.showInventoryHud === false) this.showInventoryHud = item.showInventoryHud
 
         if(item.items) this.inventory = item.items
@@ -150,6 +158,13 @@ export default {
     showWeaponBoxInfo (weapon) {
       this.showWeaponInfo = weapon.selected
       if(this.showWeaponInfo) this.weaponInfo = weapon
+    },
+
+    closeInventory () {
+      this.sendData('esx_inventory_hud:CloseInventory')
+          .then(response => {
+            if (response.data) this.showInventoryHud = false
+          })
       
     }
   },
@@ -167,7 +182,7 @@ html {
 #app {
   display: flex;
   flex-direction: row;
-  background: url(https://media.discordapp.net/attachments/752611239988822027/766419973450891314/unknown.png);
+  // background: url(https://media.discordapp.net/attachments/752611239988822027/766419973450891314/unknown.png);
   height: 100%;
   position: absolute;
   width: 100%;
