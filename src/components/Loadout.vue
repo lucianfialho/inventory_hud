@@ -42,7 +42,7 @@ export default {
   },
   methods:{
     showWeaponInfoBox (weapon) {
-        if(this.checkWeaponSelected()) {
+        if(this.checkWeaponSelected() && !weapon.selected) {
             
             this.$buefy.snackbar.open({
                 message: this.$i18n.t('notifications.moreThanOneWeaponSelect'),

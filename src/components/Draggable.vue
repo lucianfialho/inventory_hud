@@ -54,6 +54,50 @@ export default {
         type: Array,
         required: false
     }
+  },
+  methods: {
+    useItem (item) {
+        this.sendData('esx_inventory_hud:UseItem', item.value)
+    },
+
+    dropItem (event) {
+        let isDrop = this.checkIfDrop()
+      
+          if(isDrop === false) return
+      
+        const item = this.inventory[event.oldIndex]
+        item.dropQuantity = event.originalEvent.ctrlKey ? 1 : item.dropQuantity
+
+        const hasDropped = this.sendData('esx_inventory_hud:DropItem', item)
+
+        hasDropped.then(response => {
+            if (response.data)
+            this.inventory.splice(event.oldIndex, 1)
+        })
+    },
+
+    splitItem (element) {
+
+        if (element.count < 2) return
+
+        let countObj1 = parseInt(element.count / 2)
+        let countObj2 = element.count - countObj1
+        
+        const obj1 = {...element, count: countObj1}
+        const obj2 = {...element, count: countObj2}
+      
+          this.insertInInventory([obj1, obj2])
+      
+    },
+
+    insertInInventory (arrayOfItems) {
+          let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
+      
+          this.inventory = [...newinventory, ...arrayOfItems]
+    },
+    checkIfDrop () {
+          return this.isDrop
+    },
   }
 };
 </script>
