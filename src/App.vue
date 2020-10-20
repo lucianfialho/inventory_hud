@@ -12,7 +12,7 @@
         
         <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
 
-        <draggable :inventory="inventory" />
+        <draggable :inventory="inventory" :isDrop="isDrop" />
         
       </div>
     </div>
@@ -20,21 +20,19 @@
 </template>
 
 <script>
-
+import Nui from './utils/Nui'
 import draggable from './components/Draggable'
 import personalInfo from './components/PersonalInfo'
 import loadout from './components/Loadout'
 import weaponInfo from './components/WeaponInfo'
 
-import axios from 'axios'
-
 export default {
   name: 'app',
   components: {
-      draggable,
-      personalInfo,
-      loadout,
-      weaponInfo
+    draggable,
+    personalInfo,
+    loadout,
+    weaponInfo
   },
 
   data() {
@@ -60,6 +58,7 @@ export default {
           canGiveAmmo: true,
           canRemove: true,
           selected: false,
+          bind: null,
           stats: {
               damage: 100,
               fireRate: 25,
@@ -78,6 +77,7 @@ export default {
           canGiveAmmo: true,
           canRemove: true,
           selected: false,
+          bind: null,
           stats: {
               damage: 100,
               fireRate: 25,
@@ -126,17 +126,13 @@ export default {
     );
   },
   methods: {
-    sendData (name, data) {
-      return axios.post(`http://esx_inventory_hud/${name}`, { data: data })
-    },
-
     showWeaponBoxInfo (weapon) {
       this.showWeaponInfo = weapon.selected
       if(this.showWeaponInfo) this.weaponInfo = weapon
     },
 
     closeInventory () {
-      this.sendData('esx_inventory_hud:CloseInventory')
+      Nui.sendData('esx_inventory_hud:CloseInventory')
           .then(response => {
             if (response.data) this.showInventoryHud = false
           })

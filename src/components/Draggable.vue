@@ -44,6 +44,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import Nui from '@/utils/Nui';
 export default {
   name: 'loadout',
   components: {
@@ -53,11 +54,15 @@ export default {
     inventory: {
         type: Array,
         required: false
+    },
+    isDrop: {
+        type: Boolean,
+        required: false
     }
   },
   methods: {
     useItem (item) {
-        this.sendData('esx_inventory_hud:UseItem', item.value)
+        Nui.sendData('esx_inventory_hud:UseItem', item.value)
     },
 
     dropItem (event) {
@@ -68,7 +73,7 @@ export default {
         const item = this.inventory[event.oldIndex]
         item.dropQuantity = event.originalEvent.ctrlKey ? 1 : item.dropQuantity
 
-        const hasDropped = this.sendData('esx_inventory_hud:DropItem', item)
+        const hasDropped = Nui.sendData('esx_inventory_hud:DropItem', item)
 
         hasDropped.then(response => {
             if (response.data)
