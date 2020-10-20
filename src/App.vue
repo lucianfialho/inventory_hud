@@ -89,8 +89,8 @@ export default {
       showInventoryHud: false,
       showWeaponInfo: false,
       weaponInfo: {},
-      inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
-                  {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, "label": "Seu cu", "canRemove": true, "usable": true}],
+      inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
+                  {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true}],
       floor: [],
       isDrop: false,
     };
@@ -136,7 +136,6 @@ export default {
           .then(response => {
             if (response.data) this.showInventoryHud = false
           })
-      
     }
   },
 };
@@ -196,11 +195,15 @@ html {
         .bar {
           position: inherit;
           
-
+          .weight {
+            position: absolute;
+            top: 0;
+            left: 4px;
+          }
           .quantity {
-              position: absolute;
-              top: 0;
-              right: 4px;
+            position: absolute;
+            top: 0;
+            right: 4px;
           }
         }
         
@@ -214,9 +217,21 @@ html {
           max-height: 120px;
           
           max-width: 220px;
+          min-width: 140px;
+
           background: rgba($color: #000000, $alpha: 0.3);
           margin: .75rem;
           border-radius: 1rem;
+
+          &.noselect {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+            supported by Chrome, Edge, Opera and Firefox */
+          }
 
           .c-icon {
               width: 3rem;
@@ -274,14 +289,5 @@ html {
   display: flex;
   flex-direction: column;
 }
-
-.list-group-item .bar .weight {
-  left: -0.75rem;
-}
-
-.list-group-item .bar .quantity{
-  right: -0.75rem;
-}
-
 
 </style>

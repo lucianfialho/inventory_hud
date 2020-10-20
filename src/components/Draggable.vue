@@ -14,7 +14,7 @@
                 >
                     <template v-for="(element, index) in inventory">
                     <div
-                        class="list-group-item"
+                        class="list-group-item noselect"
                         v-bind:class="{ active: element.context }"
                         v-if="element.count"
                         :key="index"
