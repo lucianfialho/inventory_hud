@@ -134,14 +134,16 @@ export default {
     closeInventory () {
       Nui.sendData('esx_inventory_hud:CloseInventory')
           .then(response => {
-            if (response.data) this.showInventoryHud = false
+            if (response.data) {
+              this.showInventoryHud = false
+              this.weaponInfo = {}
+              this.inventory = []
+            }
           })
     },
     insertInInventory (arrayOfItems) {
-        let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
-        window.console.log(arrayOfItems[0])
-        
-        this.inventory = [...newinventory, ...arrayOfItems]
+      let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
+      this.inventory = [...newinventory, ...arrayOfItems]
     },
   },
 };
