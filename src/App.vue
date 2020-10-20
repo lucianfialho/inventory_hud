@@ -12,7 +12,7 @@
         
         <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
 
-        <draggable :inventory="inventory" :isDrop="isDrop" />
+        <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
         
       </div>
     </div>
@@ -89,8 +89,8 @@ export default {
       showInventoryHud: false,
       showWeaponInfo: false,
       weaponInfo: {},
-      inventory: [{"name": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
-                  {"name": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true}],
+      inventory: [{"value": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
+                  {"value": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true}],
       floor: [],
       isDrop: false,
     };
@@ -136,7 +136,13 @@ export default {
           .then(response => {
             if (response.data) this.showInventoryHud = false
           })
-    }
+    },
+    insertInInventory (arrayOfItems) {
+        let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
+        window.console.log(arrayOfItems[0])
+        
+        this.inventory = [...newinventory, ...arrayOfItems]
+    },
   },
 };
 </script>

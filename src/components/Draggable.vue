@@ -90,15 +90,9 @@ export default {
         
         const obj1 = {...element, count: countObj1}
         const obj2 = {...element, count: countObj2}
-      
-          this.insertInInventory([obj1, obj2])
-      
-    },
 
-    insertInInventory (arrayOfItems) {
-          let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
-      
-          this.inventory = [...newinventory, ...arrayOfItems]
+        this.$emit('itemWasSplited', [obj1, obj2])
+
     },
     checkIfDrop () {
           return this.isDrop

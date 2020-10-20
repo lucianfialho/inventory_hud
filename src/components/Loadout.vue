@@ -10,11 +10,12 @@
                     v-bind:class="{ active: weapon.selected }"
                     :key="index"
                     @click.prevent="showWeaponInfoBox(weapon)"
-                    @v-on:keyup.ctrl="teste(weapon)"
                     >
                     <div class="info">
                         <div class="bar">
-                            <span class="quantity"><b-tag rounded> {{weapon.ammo}}</b-tag></span>
+                            <span class="quantity">
+                                <b-tag rounded> {{weapon.ammo}}</b-tag>
+                            </span>
                         </div>
                         <div class="c-icon">
                             <b-icon
@@ -60,7 +61,7 @@ export default {
     },
     checkWeaponSelected () {
         return this.loadout.filter((weapon) => (weapon.selected)).length > 0
-    },
+    },  
     getWeaponSelected () {
         return this.loadout.filter((weapon) => (weapon.selected))
     }
