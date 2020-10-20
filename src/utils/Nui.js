@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export default {
   async send(event, data = {}) {
     /// #if DEBUG
@@ -13,6 +15,9 @@ export default {
       body: JSON.stringify(data),
     });
     /* eslint-enable no-unreachable  */
+  },
+  sendData (name, data) {
+    return axios.post(`http://esx_inventory_hud/${name}`, { data: data })
   },
   emulate(type, data = null) {
     window.dispatchEvent(
