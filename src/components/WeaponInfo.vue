@@ -1,18 +1,16 @@
 
 <template>
     <div class="weaponInfo">
-        <span> {{weapon.label}} </span>
-        
-        <b-progress :value="weapon.stats.range" show-value></b-progress>
-
-        <b-progress type="is-danger" :value="weapon.stats.accuracy" show-value></b-progress>
-
-        <b-progress type="is-success" :value="weapon.stats.ammoCapacity" show-value></b-progress>
-
+        {{ $t('weaponInfo.stats.damage') }}
         <b-progress type="is-info" :value="weapon.stats.damage" show-value></b-progress>
-
+        {{ $t('weaponInfo.stats.fireRate') }}
         <b-progress type="is-warning" :value="weapon.stats.fireRate" show-value></b-progress>
-        
+        {{ $t('weaponInfo.stats.accuracy') }}
+        <b-progress type="is-danger" :value="weapon.stats.accuracy" show-value></b-progress>
+        {{ $t('weaponInfo.stats.ammoCapacity') }}
+        <b-progress type="is-success" :value="weapon.stats.ammoCapacity" show-value></b-progress>
+        {{ $t('weaponInfo.stats.range') }}
+        <b-progress :value="weapon.stats.range" show-value></b-progress>
     </div>
 </template>
 
@@ -42,14 +40,18 @@ export default {
     align-items: center;
     align-content: baseline;
     
-    background: rgba($color: #000000, $alpha: 0.1); 
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid white ;
+    background: rgba($color: #000000, $alpha: 0.5); 
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.5);
     padding: 1rem;
+    font-size: 1rem;
 
-  .progress {
-      width: 20vh;
-  }
+    .progress {
+        width: 18.5vh;
+    }
+
+    .progress-wrapper:not(:last-child) {
+        margin-bottom: 0.1rem;
+    }
 }
 </style>
 
