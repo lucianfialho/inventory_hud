@@ -9,11 +9,8 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        
         <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
-
         <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
-        
       </div>
     </div>
   </div>
@@ -89,8 +86,8 @@ export default {
       showInventoryHud: false,
       showWeaponInfo: false,
       weaponInfo: {},
-      inventory: [{"value": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true}, 
-                  {"value": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true}],
+      inventory: [{"value": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true, giveQuantity: 0}, 
+                  {"value": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true, giveQuantity: 0}],
       floor: [],
       isDrop: false,
     };

@@ -13,6 +13,9 @@
                     >
                     <div class="info">
                         <div class="bar">
+                            <span class="weight" v-if="weapon.bind">
+                                <b-tag rounded> {{weapon.bind}}</b-tag>
+                            </span>
                             <span class="quantity">
                                 <b-tag rounded> {{weapon.ammo}}</b-tag>
                             </span>

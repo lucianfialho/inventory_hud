@@ -8,8 +8,11 @@ const messages = {
         items: 'Items',
         notifications:{
             moreThanOneWeaponSelect: 'You can select only 1 weapon!',
-            needWeaponSelect: 'You need a weapon selected',
-            onlyWeaponCanBeBinding: 'Only weapon can be binding'
+            needWeaponSelect: 'You need selected a weapon',
+            onlyWeaponCanBeBinding: 'Only weapon can be binding',
+            thisItemCannotBeGivem: 'This item cannot be gifted',
+            thereIsNoPlayersClosest: 'There no players closest to u :/',
+            thereIsNoPlayersSelected: 'There no players selected to u :/'
         }
     },
     'pt-br': {
@@ -18,7 +21,10 @@ const messages = {
         notifications:{
             moreThanOneWeaponSelect: 'Você só pode selecionar uma arma!',
             needWeaponSelect: 'Você precisa ter uma arma selecionada',
-            onlyWeaponCanBeBinding: 'Somente armas podem ser bindadas'
+            onlyWeaponCanBeBinding: 'Somente armas podem ser bindadas',
+            thisItemCannotBeGivem: 'Esse item não pode ser dado como presente',
+            thereIsNoPlayersClosest: 'Não tem nenhum player próximo a você :/',
+            thereIsNoPlayersSelected: 'Você precisa selecionar um player'
         }
     }
 };
