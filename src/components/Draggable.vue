@@ -67,7 +67,7 @@
 import draggable from 'vuedraggable'
 import Nui from '@/utils/Nui';
 export default {
-  name: 'loadout',
+  name: 'items',
   components: {
     draggable
   },
