@@ -9,7 +9,7 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <loadout :loadout="loadout" @weaponAsSelected="showWeaponBoxInfo" />
+        <loadout :loadout="loadout" @bindHasSelected="setBindValue" @weaponAsSelected="showWeaponBoxInfo" />
         <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
       </div>
     </div>
@@ -44,50 +44,11 @@ export default {
           grade_label: 'Commandant'
         }
       },
-      loadout: [{
-          label: "WEAPON_SPECIALCARBINE",
-          count: 1,
-          type: 'item_weapon',
-          value: "WEAPON_SPECIALCARBINE",
-          usable: false,
-          rare: false,
-          ammo: 100,
-          canGiveAmmo: true,
-          canRemove: true,
-          selected: false,
-          bind: null,
-          stats: {
-              damage: 100,
-              fireRate: 25,
-              ammoCapacity: 50,
-              accuracy: 75,
-              range: 96
-          }
-      },{
-          label: "WEAPON_AK",
-          count: 1,
-          type: 'item_weapon',
-          value: "WEAPON_AK",
-          usable: false,
-          rare: false,
-          ammo: 100,
-          canGiveAmmo: true,
-          canRemove: true,
-          selected: false,
-          bind: null,
-          stats: {
-              damage: 100,
-              fireRate: 25,
-              ammoCapacity: 50,
-              accuracy: 75,
-              range: 96
-          }
-      }],
+      loadout: [],
       showInventoryHud: false,
       showWeaponInfo: false,
       weaponInfo: {},
-      inventory: [{"value": "meu_pau","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Meu Pau", "canRemove": true, "usable": true, giveQuantity: 0}, 
-                  {"value": "seu_cu","rare": false, "type": "item_standard", "count": 1, weight: 1, "label": "Seu cu", "canRemove": true, "usable": true, giveQuantity: 0}],
+      inventory: [],
       floor: [],
       isDrop: false,
     };
@@ -142,6 +103,18 @@ export default {
       let newinventory = this.inventory.filter(el => (el.value !== arrayOfItems[0].value))
       this.inventory = [...newinventory, ...arrayOfItems]
     },
+    setBindValue (data) {
+      const newLoadout = this.loadout.map(weapon => {
+        if(weapon.value === data.weapon.value) {
+          return {
+            ...weapon,
+            bind: data.bind
+          }
+        }
+      })
+
+      this.loadout = newLoadout
+    }
   },
 };
 </script>

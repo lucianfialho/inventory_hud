@@ -9,7 +9,7 @@
                     class="list-group-item noselect"
                     v-bind:class="{ active: weapon.selected }"
                     :key="index"
-                    @click.prevent="showWeaponInfoBox(weapon)"
+                    @click.prevent="selectWeapon(weapon)"
                     >
                     <div class="info">
                         <div class="bar">
@@ -47,8 +47,13 @@ export default {
         required: false
     }
   },
+  data () {
+    return {
+        bindHover: false
+    }
+  },
   methods:{
-    showWeaponInfoBox (weapon) {
+    selectWeapon (weapon) {
         if(this.checkWeaponSelected() && !weapon.selected) {
             
             this.$buefy.snackbar.open({
@@ -63,21 +68,28 @@ export default {
         this.$emit('weaponAsSelected', weapon)
     },
     checkWeaponSelected () {
+        if(!this.loadout) return false
+
         return this.loadout.filter((weapon) => (weapon.selected)).length > 0
     },  
     getWeaponSelected () {
         return this.loadout.filter((weapon) => (weapon.selected))
+    },
+
+    checkIfExistsBinding (key) {
+        return this.loadout.filter((weapon) => (weapon.bind == key))
     }
   },
   mounted () {
         this._keyListener = function(e) {
             const keys = ["1", "2", "3", "4", "5", "6"]
-            if (keys.includes(e.key) && (e.ctrlKey)) {
-                e.preventDefault();
+            
+            if (keys.includes(e.key) && e.ctrlKey) {
+                e.preventDefault()
                 
-                let weapon = this.getWeaponSelected()[0]
+                const weapon = this.getWeaponSelected()
                 
-                if(weapon == null || weapon == undefined) {
+                if(weapon.length < 1) {
                     this.$buefy.snackbar.open({
                         message: this.$i18n.t('notifications.needWeaponSelect'),
                         type: 'is-warning',
@@ -87,19 +99,17 @@ export default {
                     return 
                 }
                 
-                if(weapon.type === "item_weapon") {
-                    weapon.bind = e.key
-                    Nui.sendData('esx_inventory_hud:SetWeaponBinding', weapon)
-                }else {
-                     this.$buefy.snackbar.open({
-                        message: this.$i18n.t('notifications.onlyWeaponCanBeBinding'),
-                        type: 'is-warning',
-                        position: 'is-top',
-                        indefinite: true,
+                Nui.sendData('esx_inventory_hud:ToggleWeaponBinding', {bind: e.key, weapon: weapon[0]})
+                    .then(response => {
+                        const data = {
+                            bind: response.data,
+                            weapon: weapon[0]
+                        }
+                        
+                        this.$emit('bindHasSelected', data)
                     })
-                }
             }
-        };
+        }
 
         document.addEventListener('keydown', this._keyListener.bind(this));
 
