@@ -1,7 +1,7 @@
 <template>
     <div class="loadout panel">
         <header class="header">
-            <h2> {{ $t('loadout') }} </h2>
+            <h2> {{ $t('loadout') }} {{weaponSelected}} </h2>
         </header>
         <section class="main">
             <template v-for="(weapon, index) in loadout">
@@ -9,7 +9,7 @@
                     class="list-group-item noselect"
                     v-bind:class="{ active: weapon.selected, openMenu: weapon.openMenuWeapon }"
                     :key="index"
-                    @click.prevent="selectWeapon(weapon)"
+                    @click.capture.prevent="selectWeapon(weapon)"
                     @contextmenu.prevent.ctrl.exact="openMenuWeapon(weapon)"
                     >
                     <div class="info">
@@ -61,14 +61,16 @@
 <script>
 
 import Nui from '@/utils/Nui'
-// import Player from '@/utils/Player';
+import Player from '@/utils/Player';
 
 export default {
   name: 'loadout',
   props: {
+    weaponSelected: {
+        type: Object
+    },
     loadout: {
         type: Array,
-        required: false
     }
   },
   data () {
@@ -99,7 +101,7 @@ export default {
         return this.loadout.filter((weapon) => (weapon.selected)).length > 0
     },  
     getWeaponSelected () {
-        return this.loadout.filter((weapon) => (weapon.selected))
+        return this.weaponSelected
     },
 
     checkIfExistsBinding (key) {
@@ -125,7 +127,7 @@ export default {
         })
     },
     openMenuWeapon(weapon) {
-        // this.playersClosests = Player.getClosestsPlayers(weapon)
+        this.playersClosests = Player.getClosestsPlayers(weapon)
 
         if(!this.playersClosests) {
                 this.$buefy.snackbar.open({
@@ -141,15 +143,15 @@ export default {
     }   
   },
   mounted() {
-        this._keyListener = async(e) => {
+        this._keyListener = (e) => {
             const keys = ["1", "2", "3", "4", "5"]
             
             if (keys.includes(e.key) && e.ctrlKey) {
                 e.preventDefault()
                 
-                const weapon = await this.getWeaponSelected()
-               
-                if(weapon.length < 1) {
+                const weapon = this.getWeaponSelected()
+
+                if(Object.keys(weapon).length === 0  && weapon.constructor === Object) {
                     this.$buefy.snackbar.open({
                         message: this.$i18n.t('notifications.needWeaponSelect'),
                         type: 'is-warning',
@@ -159,11 +161,11 @@ export default {
                     return 
                 }
                 
-                Nui.sendData('esx_inventory_hud:ToggleWeaponBinding', {bind: e.key, weapon: weapon[0]})
+                Nui.sendData('esx_inventory_hud:ToggleWeaponBinding', {bind: e.key, weapon: weapon})
                     .then(response => {
                         const data = {
                             bind: response.data,
-                            weapon: weapon[0]
+                            weapon: weapon
                         }
                         
                         this.$emit('bindHasSelected', data)
@@ -171,7 +173,7 @@ export default {
             }
         }
 
-        document.addEventListener('keydown', this._keyListener.bind(this));
+        document.addEventListener('keydown', this._keyListener.bind(this), true);
 
   }
 };
