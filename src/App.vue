@@ -9,7 +9,7 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <loadout :loadout="loadout" @bindHasSelected="setBindValue" @weaponAsSelected="showWeaponBoxInfo" />
+        <loadout :loadout="loadout" :weaponSelected="weaponInfo" @bindHasSelected="setBindValue" @weaponAsSelected="showWeaponBoxInfo" />
         <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
       </div>
     </div>
@@ -86,7 +86,12 @@ export default {
   methods: {
     showWeaponBoxInfo (weapon) {
       this.showWeaponInfo = weapon.selected
-      if(this.showWeaponInfo) this.weaponInfo = weapon
+
+      if(this.showWeaponInfo) {
+        this.weaponInfo = weapon
+      } else {
+        this.weaponInfo = {}
+      }
     },
 
     closeInventory () {
@@ -104,16 +109,7 @@ export default {
       this.inventory = [...newinventory, ...arrayOfItems]
     },
     setBindValue (data) {
-      const newLoadout = this.loadout.map(weapon => {
-        if(weapon.value === data.weapon.value) {
-          return {
-            ...weapon,
-            bind: data.bind
-          }
-        }
-      })
-
-      this.loadout = newLoadout
+      this.weaponInfo.bind = data.bind
     }
   },
 };
