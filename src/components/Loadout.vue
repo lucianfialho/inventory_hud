@@ -7,9 +7,10 @@
             <template v-for="(weapon, index) in loadout">
                 <div
                     class="list-group-item noselect"
-                    v-bind:class="{ active: weapon.selected }"
+                    v-bind:class="{ active: weapon.selected, openMenu: weapon.openMenuWeapon }"
                     :key="index"
                     @click.prevent="selectWeapon(weapon)"
+                    @contextmenu.prevent.ctrl.exact="openMenuWeapon(weapon)"
                     >
                     <div class="info">
                         <div class="bar">
@@ -29,6 +30,28 @@
                         </div>
                         <span> {{weapon.label}} </span>
                     </div>
+                    <div class="menu" v-if="weapon.openMenuWeapon">
+                        <b-button @click="confirmDrop(weapon)" type="is-danger" icon-left="trash">Drop</b-button>
+                        
+                            <b-select v-if="playersClosests.length > 0" v-model="playerIdSelectToGiveWeapon" placeholder="Select a character" icon="account">
+                                <template v-for="player in playersClosests"> 
+                                    <option
+                                        :value="player.playerId"
+                                        :key="player.playerId">
+                                        {{ player.name }}
+                                    </option>
+                                </template>
+                            </b-select>
+                            <b-field v-if="playerIdSelectToGiveWeapon">
+                                <b-input placeholder="Digite a quantidade"
+                                    v-model="weapon.giveAmmoQuantity"
+                                    type="number"
+                                    icon-right="gift"
+                                    icon-right-clickable
+                                    @icon-right-click="giveItemToPlayer(weapon)">
+                                </b-input>
+                            </b-field>
+                        </div>
                 </div>
             </template>
         </section>
@@ -38,6 +61,7 @@
 <script>
 
 import Nui from '@/utils/Nui'
+// import Player from '@/utils/Player';
 
 export default {
   name: 'loadout',
@@ -49,7 +73,9 @@ export default {
   },
   data () {
     return {
-        bindHover: false
+        bindHover: false,
+        playersClosests: [],
+        playerIdSelectToGiveWeapon: null,
     }
   },
   methods:{
@@ -78,17 +104,51 @@ export default {
 
     checkIfExistsBinding (key) {
         return this.loadout.filter((weapon) => (weapon.bind == key))
-    }
+    },
+    confirmDrop(weapon) {
+        this.$buefy.dialog.confirm({
+            title: 'Droping weapon',
+            message: this.$i18n.t('notifications.areYouSure'),
+            confirmText: this.$i18n.t('actions.drop'),
+            cancelText: this.$i18n.t('actions.cancel'),
+            type: 'is-danger',
+            hasIcon: true,
+            onConfirm: () => this.dropWeapon(weapon)
+        })
+    },
+    dropWeapon(weapon) {
+        const hasDropped = Nui.sendData('esx_inventory_hud:DropItem', weapon)
+
+        hasDropped.then(response => {
+            if (response.data)
+            this.loadout.splice(event.oldIndex, 1)
+        })
+    },
+    openMenuWeapon(weapon) {
+        // this.playersClosests = Player.getClosestsPlayers(weapon)
+
+        if(!this.playersClosests) {
+                this.$buefy.snackbar.open({
+                    message: this.$i18n.t('notifications.thereIsNoPlayersClosest'),
+                    type: 'is-warning',
+                    position: 'is-top',
+                    indefinite: true,
+                })
+                this.playersClosests = []
+                return
+            }
+        weapon.openMenuWeapon = true
+    }   
   },
-  mounted () {
-        this._keyListener = function(e) {
-            const keys = ["1", "2", "3", "4", "5", "6"]
+  mounted() {
+        this._keyListener = async(e) => {
+            const keys = ["1", "2", "3", "4", "5"]
             
             if (keys.includes(e.key) && e.ctrlKey) {
                 e.preventDefault()
                 
-                const weapon = this.getWeaponSelected()
-                
+                const weapon = await this.getWeaponSelected()
+               
                 if(weapon.length < 1) {
                     this.$buefy.snackbar.open({
                         message: this.$i18n.t('notifications.needWeaponSelect'),
@@ -120,7 +180,6 @@ export default {
 <style lang="scss">
     .loadout {
         width: 100%;
-        max-height: 20%;
         z-index: 2;
         min-height: 20%;
         display: flex;
@@ -135,9 +194,19 @@ export default {
             }
             
             &.active{
-                max-height: 17%;
+                max-height: 20%;
                 min-height: 17%;
                 background: #f9bb57 !important
+            }
+
+            &.openMenu{
+                max-height: 200px !important;
+
+                .menu {
+                    display: flex;
+                    align-content: center;
+                    flex-direction: column;
+                }
             }
         }
 
