@@ -20,7 +20,7 @@
                         :key="index"
                         @contextmenu.prevent="useItem(element)"
                         @click.middle.ctrl.exact="splitItem(element)"
-                        @click.middle.prevent.exact="getClosestsPlayers(element)"
+                        @click.middle.prevent.exact="openMenuItem(element)"
                     >
                         <div class="info">
                             <div class="bar">
@@ -66,6 +66,7 @@
 <script>
 import draggable from 'vuedraggable'
 import Nui from '@/utils/Nui';
+import Player from '@/utils/Player';
 export default {
   name: 'items',
   components: {
@@ -125,8 +126,7 @@ export default {
     checkIfDrop () {
           return this.isDrop
     },
-
-    getClosestsPlayers (element) {
+    async openMenuItem (element) {
         if(!element.canRemove) {
             this.$buefy.snackbar.open({
                 message: this.$i18n.t('notifications.thisItemCannotBeGivem'),
@@ -135,27 +135,24 @@ export default {
                 indefinite: true,
             })
 
-            this.openMenu = false
+            return
+        }
+        
+        this.playersClosests = await Player.getClosestsPlayers()
 
+        if(!this.playersClosests) {
+            this.$buefy.snackbar.open({
+                message: this.$i18n.t('notifications.thereIsNoPlayersClosest'),
+                type: 'is-warning',
+                position: 'is-top',
+                indefinite: true,
+            })
+            this.playersClosests = []
             return
         }
 
-        const closestsPlayers = Nui.sendData('esx_inventory_hud:GetClosestsPlayers', element)
-              closestsPlayers.then(response => {
-                if(!response.data) {
-                    this.$buefy.snackbar.open({
-                        message: this.$i18n.t('notifications.thereIsNoPlayersClosest'),
-                        type: 'is-warning',
-                        position: 'is-top',
-                        indefinite: true,
-                    })
-
-                    return
-                }
-                
-                element.openMenu = true
-                this.playersClosests = response.data.playersClosest
-              })
+        
+        element.openMenu = true
     },
 
     giveItemToPlayer (element) {
@@ -181,7 +178,7 @@ export default {
 
                     return
                 }
-                
+
                 element.openMenu = true
                 this.playersClosests = response.data.playersClosest
               })
