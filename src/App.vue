@@ -11,6 +11,7 @@
       <div class="personalItems">
         <loadout :loadout="loadout" :weaponSelected="weaponInfo" @weaponAsSelected="showWeaponBoxInfo" />
         <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
+        <help />
       </div>
     </div>
   </div>
@@ -22,6 +23,7 @@ import draggable from './components/Draggable'
 import personalInfo from './components/PersonalInfo'
 import loadout from './components/Loadout'
 import weaponInfo from './components/WeaponInfo'
+import help from './components/Help'
 
 export default {
   name: 'app',
@@ -29,7 +31,8 @@ export default {
     draggable,
     personalInfo,
     loadout,
-    weaponInfo
+    weaponInfo,
+    help
   },
 
   data() {
@@ -179,7 +182,9 @@ html {
 
   .panel {
     color: white;
-      
+      strong {
+        color: white;
+      }
       .header {
         background: rgba($color: #000000, $alpha: 0.5);
         padding: 1rem;
@@ -250,6 +255,18 @@ html {
               display: flex;
               align-items: center;
               justify-content: center;
+          }
+        }
+
+        .tabs a{
+          color: white;
+        }
+        .table {
+          background: rgba($color: #000000, $alpha: 0.2);
+          color: white;
+          font-size: 15px;
+          th {
+            color: white;
           }
         }
       }
