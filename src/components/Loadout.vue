@@ -66,9 +66,6 @@ import Player from '@/utils/Player';
 export default {
   name: 'loadout',
   props: {
-    weaponSelected: {
-        type: Object
-    },
     loadout: {
         type: Array,
     }
@@ -99,11 +96,7 @@ export default {
         if(!this.loadout) return false
 
         return this.loadout.filter((weapon) => (weapon.selected)).length > 0
-    },  
-    getWeaponSelected () {
-        return this.weaponSelected
     },
-
     checkIfExistsBinding (key) {
         return this.loadout.filter((weapon) => (weapon.bind == key))
     },
@@ -142,40 +135,6 @@ export default {
         weapon.openMenuWeapon = true
     }   
   },
-  mounted() {
-        this._keyListener = (e) => {
-            const keys = ["1", "2", "3", "4", "5"]
-            
-            if (keys.includes(e.key) && e.ctrlKey) {
-                e.preventDefault()
-                
-                const weapon = this.getWeaponSelected()
-
-                if(Object.keys(weapon).length === 0  && weapon.constructor === Object) {
-                    this.$buefy.snackbar.open({
-                        message: this.$i18n.t('notifications.needWeaponSelect'),
-                        type: 'is-warning',
-                        position: 'is-top',
-                        indefinite: true,
-                    })
-                    return 
-                }
-                
-                Nui.sendData('esx_inventory_hud:ToggleWeaponBinding', {bind: e.key, weapon: weapon})
-                    .then(response => {
-                        const data = {
-                            bind: response.data,
-                            weapon: weapon
-                        }
-                        
-                        this.$emit('bindHasSelected', data)
-                    })
-            }
-        }
-
-        document.addEventListener('keydown', this._keyListener.bind(this), true);
-
-  }
 };
 </script>
 

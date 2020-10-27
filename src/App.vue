@@ -9,7 +9,7 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <loadout :loadout="loadout" :weaponSelected="weaponInfo" @bindHasSelected="setBindValue" @weaponAsSelected="showWeaponBoxInfo" />
+        <loadout :loadout="loadout" :weaponSelected="weaponInfo" @weaponAsSelected="showWeaponBoxInfo" />
         <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
       </div>
     </div>
@@ -55,6 +55,7 @@ export default {
   },
   destroyed() {
     window.removeEventListener('message', this.listener);
+    window.removeEventListener('keydown', this.keyListener);
   },
   mounted() {
 
@@ -82,6 +83,40 @@ export default {
       },
       false,
     );
+
+    this.keyListener = window.addEventListener(
+      'keydown',
+      event => {
+        const keys = ["1", "2", "3", "4", "5"]
+            
+        if (keys.includes(event.key) && event.ctrlKey) {
+          event.preventDefault()
+          
+          const weapon = this.weaponInfo
+
+          if(Object.keys(weapon).length === 0  && weapon.constructor === Object) {
+              this.$buefy.snackbar.open({
+                  message: this.$i18n.t('notifications.needWeaponSelect'),
+                  type: 'is-warning',
+                  position: 'is-top',
+                  indefinite: true,
+              })
+              return 
+          }
+            
+          Nui.sendData('esx_inventory_hud:ToggleWeaponBinding', {bind: event.key, weapon: weapon})
+              .then(response => {
+                  const data = {
+                      bind: response.data,
+                      weapon: weapon
+                  }
+                  
+                  this.setBindValue(data)
+              })
+        }
+      }
+    )
+
   },
   methods: {
     showWeaponBoxInfo (weapon) {
