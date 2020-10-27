@@ -1,7 +1,7 @@
 <template>
     <div class="loadout panel">
         <header class="header">
-            <h2> {{ $t('loadout') }} {{weaponSelected}} </h2>
+            <h2> {{ $t('loadout') }} </h2>
         </header>
         <section class="main">
             <template v-for="(weapon, index) in loadout">
