@@ -21,13 +21,7 @@
                                 <b-tag rounded> {{weapon.ammo}}</b-tag>
                             </span>
                         </div>
-                        <div class="c-icon">
-                            <b-icon
-                                pack="fas"
-                                :icon="weapon.icon ? weapon.icon : 'question'"
-                                size="is-medium">
-                            </b-icon>
-                        </div>
+                        <gIcon :name="weapon.value" />
                         <span> {{weapon.label}} </span>
                     </div>
                     <div class="menu" v-if="weapon.openMenuWeapon">
@@ -62,9 +56,13 @@
 
 import Nui from '@/utils/Nui'
 import Player from '@/utils/Player';
+import gIcon from '@/components/Icon'
 
 export default {
   name: 'loadout',
+  components: {
+    gIcon
+  },
   props: {
     loadout: {
         type: Array,

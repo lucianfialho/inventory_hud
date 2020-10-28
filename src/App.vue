@@ -47,7 +47,101 @@ export default {
           grade_label: 'Commandant'
         }
       },
-      loadout: [],
+      loadout: [{
+          label: "WEAPON_STICKYBOMB",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_STICKYBOMB",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      },
+      {
+          label: "WEAPON_STUNGUN",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_STUNGUN",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      },
+      {
+          label: "WEAPON_SWITCHBLADE",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_SWITCHBLADE",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      },
+      {
+          label: "WEAPON_VINTAGEPISTOL",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_VINTAGEPISTOL",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      },
+      {
+          label: "WEAPON_WRENCH",
+          count: 1,
+          type: 'item_weapon',
+          value: "WEAPON_WRENCH",
+          usable: false,
+          rare: false,
+          ammo: 100,
+          canGiveAmmo: true,
+          canRemove: true,
+          selected: false,
+          stats: {
+              damage: 100,
+              fireRate: 25,
+              ammoCapacity: 50,
+              accuracy: 75,
+              range: 96
+          }
+      }],
       showInventoryHud: false,
       showWeaponInfo: false,
       weaponInfo: {},
