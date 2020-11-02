@@ -15,6 +15,14 @@
             </b-icon>
             <span> {{user.bank}}</span>
         </p>
+        <div class="inventoryWeight">
+            <b-progress size="is-medium" :value="20" show-value> 
+                <b-icon
+                    icon="shopping-bag"
+                    size="is-small">
+                </b-icon>
+            </b-progress>
+        </div>
     </div>
 </template>
 

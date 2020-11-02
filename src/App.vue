@@ -9,8 +9,8 @@
         <weaponInfo v-if="showWeaponInfo" :weapon="weaponInfo"></weaponInfo>
       </div>
       <div class="personalItems">
-        <loadout :loadout="loadout" :weaponSelected="weaponInfo" @weaponAsSelected="showWeaponBoxInfo" />
-        <draggable :inventory="inventory" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
+        <loadout :loadout="loadout" :weaponSelected="weaponInfo" @itemGived="clearPlayerGive" @weaponAsSelected="showWeaponBoxInfo" />
+        <draggable :inventory="inventory" @itemGived="clearPlayerGive" @itemWasSplited="insertInInventory" :isDrop="isDrop"  />
         <help />
       </div>
     </div>
@@ -148,6 +148,7 @@ export default {
       inventory: [],
       floor: [],
       isDrop: false,
+      playerIdSelectToGive: null,
     };
   },
   destroyed() {
@@ -172,7 +173,8 @@ export default {
         if(item.showInventoryHud === false) this.showInventoryHud = item.showInventoryHud
 
         if(item.items) this.inventory = item.items
-
+        if(item.weight) this.inventoryWeight = item.weight
+        
         if(item.user) {
           this.user = item.user
           this.loadout = item.loadout
@@ -242,6 +244,9 @@ export default {
     },
     setBindValue (data) {
       this.weaponInfo.bind = data.bind
+    },
+    clearPlayerGive () {
+      this.playerIdSelectToGive = null
     }
   },
 };
