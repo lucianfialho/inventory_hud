@@ -9,6 +9,7 @@ const messages = {
         actions: {
             drop: 'Drop',
             cancel: 'Cancel',
+            give: 'Give'
         },
         weaponInfo: {
             stats: {
@@ -36,6 +37,7 @@ const messages = {
         actions: {
             drop: 'Dropar',
             cancel: 'Cancelar',
+            give: 'Presentear'
         },
         weaponInfo: {
             stats: {
