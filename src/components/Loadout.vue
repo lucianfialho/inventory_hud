@@ -27,25 +27,18 @@
                     <div class="menu" v-if="weapon.openMenuWeapon">
                         <b-button @click="confirmDrop(weapon)" type="is-danger" icon-left="trash">Drop</b-button>
                         
-                            <b-select v-if="playersClosests.length > 0" v-model="playerIdSelectToGive" placeholder="Select a character" icon="account">
-                                <template v-for="player in playersClosests"> 
-                                    <option
-                                        :value="player.playerId"
-                                        :key="player.playerId">
-                                        {{ player.name }}
-                                    </option>
-                                </template>
-                            </b-select>
-                            <b-field v-if="playerIdSelectToGive">
-                                <b-input placeholder="Digite a quantidade"
-                                    v-model="weapon.giveAmmoQuantity"
-                                    type="number"
-                                    icon-right="gift"
-                                    icon-right-clickable
-                                    @icon-right-click="giveItemToPlayer(weapon)">
-                                </b-input>
-                            </b-field>
-                        </div>
+                        <b-select v-if="playersClosests" v-model="playerIdSelectToGive" placeholder="Select a character" icon="user">
+                            <template v-for="player in playersClosests"> 
+                                <option
+                                    :value="player.playerId"
+                                    :key="player.playerId">
+                                    {{ player.name }}
+                                </option>
+                            </template>
+                        </b-select>
+                        <br/>
+                        <b-button v-if="playerIdSelectToGive" @click.capture="giveItemToPlayer(weapon)" type="is-info" icon-left="gift">{{ $t('actions.give') }}</b-button>
+                    </div>
                 </div>
             </template>
         </section>
@@ -119,17 +112,6 @@ export default {
     },
     async openMenuWeapon(weapon) {
         this.playersClosests = await Player.getClosestsPlayers(weapon)
-
-        if(!this.playersClosests) {
-                this.$buefy.snackbar.open({
-                    message: this.$i18n.t('notifications.thereIsNoPlayersClosest'),
-                    type: 'is-warning',
-                    position: 'is-top',
-                    indefinite: true,
-                })
-                this.playersClosests = []
-                return
-            }
         weapon.openMenuWeapon = true
     },
     sendWeaponToPlayer (weapon) {
