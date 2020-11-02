@@ -27,7 +27,7 @@
                     <div class="menu" v-if="weapon.openMenuWeapon">
                         <b-button @click="confirmDrop(weapon)" type="is-danger" icon-left="trash">Drop</b-button>
                         
-                            <b-select v-if="playersClosests.length > 0" v-model="playerIdSelectToGiveWeapon" placeholder="Select a character" icon="account">
+                            <b-select v-if="playersClosests.length > 0" v-model="playerIdSelectToGive" placeholder="Select a character" icon="account">
                                 <template v-for="player in playersClosests"> 
                                     <option
                                         :value="player.playerId"
@@ -36,7 +36,7 @@
                                     </option>
                                 </template>
                             </b-select>
-                            <b-field v-if="playerIdSelectToGiveWeapon">
+                            <b-field v-if="playerIdSelectToGive">
                                 <b-input placeholder="Digite a quantidade"
                                     v-model="weapon.giveAmmoQuantity"
                                     type="number"
@@ -72,7 +72,7 @@ export default {
     return {
         bindHover: false,
         playersClosests: [],
-        playerIdSelectToGiveWeapon: null,
+        playerIdSelectToGive: null,
     }
   },
   methods:{
@@ -117,8 +117,8 @@ export default {
             this.loadout.splice(event.oldIndex, 1)
         })
     },
-    openMenuWeapon(weapon) {
-        this.playersClosests = Player.getClosestsPlayers(weapon)
+    async openMenuWeapon(weapon) {
+        this.playersClosests = await Player.getClosestsPlayers(weapon)
 
         if(!this.playersClosests) {
                 this.$buefy.snackbar.open({
@@ -131,7 +131,36 @@ export default {
                 return
             }
         weapon.openMenuWeapon = true
-    }   
+    },
+    sendWeaponToPlayer (weapon) {
+        if(this.playerIdSelectToGive === null) {
+            this.$buefy.snackbar.open({
+                message: this.$i18n.t('notifications.thereIsNoPlayersSelected'),
+                type: 'is-warning',
+                position: 'is-top',
+                indefinite: true,
+            })
+        }
+
+        const givemItem = Player.giveItemToPlayer(this.playerIdSelectToGive, weapon)
+            givemItem.then(response => {
+                if(!response.data) {
+                    this.$buefy.snackbar.open({
+                        message: this.$i18n.t('notifications.thereIsNoPlayersClosest'),
+                        type: 'is-warning',
+                        position: 'is-top',
+                        indefinite: true,
+                    })
+
+                    return
+                }
+
+                weapon.openMenu = false
+                
+                this.$emit('itemGived', this.playerIdSelectToGive)
+            })
+    },
+   
   },
 };
 </script>
