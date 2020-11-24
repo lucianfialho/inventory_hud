@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     useItem (item) {
-        Nui.sendData('esx_inventory_hud:UseItem', item.value)
+        Nui.sendData('esx_inventory_hud:UseItem', item)
     },
 
     dropItem (event) {
